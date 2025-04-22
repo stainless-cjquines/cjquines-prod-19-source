@@ -104,8 +104,8 @@ jobs:
             '$ARGS.named'
           )
           PARENT_REVISION=$(jq -n \
-            --jsonargs $PARENT_HASHES $MERGE_BASE_HASHES '"${{ github.base_ref }}"' \
-            '$ARGS.positional'
+            '$ARGS.positional' \
+            --jsonargs $PARENT_HASHES $MERGE_BASE_HASHES '"${{ github.base_ref }}"'
           )
 
           echo "parent_revision=$PARENT_REVISION" >> $GITHUB_OUTPUT
