@@ -93,17 +93,17 @@ jobs:
             MERGE_BASE_CONFIG_HASH=""
           fi
 
-          PARENT_HASHES=$(jq -n \
+          PARENT_HASHES=$(jq -nc \
             --arg "${{ env.OAS_PATH }}" "$PARENT_OAS_HASH" \
             --arg "${{ env.CONFIG_PATH }}" "$PARENT_CONFIG_HASH" \
             '$ARGS.named'
           )
-          MERGE_BASE_HASHES=$(jq -n \
+          MERGE_BASE_HASHES=$(jq -nc \
             --arg "${{ env.OAS_PATH }}" "$MERGE_BASE_OAS_HASH" \
             --arg "${{ env.CONFIG_PATH }}" "$MERGE_BASE_CONFIG_HASH" \
             '$ARGS.named'
           )
-          PARENT_REVISION=$(jq -n \
+          PARENT_REVISION=$(jq -nc \
             '$ARGS.positional' \
             --jsonargs "$PARENT_HASHES" "$MERGE_BASE_HASHES" '"${{ github.base_ref }}"'
           )
