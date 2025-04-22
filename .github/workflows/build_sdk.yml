@@ -116,7 +116,7 @@ jobs:
       - name: Build SDK
         id: build-sdk
         if: steps.config-changed.outputs.changed == 'true'
-        uses: stainless-api/build-sdk-action@d370a61982516ab4317ab75e4df2fbc11a5a0c8a
+        uses: stainless-api/build-sdk-action@3a83df563500bfc9d54a8f3d9ebb679d77a97cc6
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
           oas_path: ${{ env.OAS_PATH }}
@@ -285,7 +285,7 @@ jobs:
       - name: Build SDK
         id: build-sdk
         if: steps.config-changed.outputs.changed == 'true'
-        uses: stainless-api/build-sdk-action@d370a61982516ab4317ab75e4df2fbc11a5a0c8a
+        uses: stainless-api/build-sdk-action@3a83df563500bfc9d54a8f3d9ebb679d77a97cc6
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
           oas_path: ${{ env.OAS_PATH }}
