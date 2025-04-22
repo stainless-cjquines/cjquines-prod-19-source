@@ -111,7 +111,7 @@ jobs:
           echo "parent_revision=$PARENT_REVISION" >> $GITHUB_OUTPUT
           echo "parent_revision=$PARENT_REVISION"
 
-          git checkout ${GITHUB_SHA}
+          git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build SDK
         id: build-sdk
