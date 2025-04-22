@@ -103,6 +103,8 @@ jobs:
             --arg "${{ env.CONFIG_PATH }}" "$MERGE_BASE_CONFIG_HASH" \
             '$ARGS.named'
           )
+          echo $PARENT_HASHES
+          echo $MERGE_BASE_HASHES
           PARENT_REVISION=$(jq -n \
             '$ARGS.positional' \
             --jsonargs $PARENT_HASHES $MERGE_BASE_HASHES '"${{ github.base_ref }}"'
