@@ -36,7 +36,6 @@ resources:
     # [reference]: https://app.stainless.com/docs/reference/config#model
     models:
       pet: "#/components/schemas/Pet"
-      category: "#/components/schemas/Category"
     # Configure the methods defined in this resource. Each key in the object is the
     # name of the method and the value is either an endpoint (for example, `get /foo`)
     # or an object with more detail.
