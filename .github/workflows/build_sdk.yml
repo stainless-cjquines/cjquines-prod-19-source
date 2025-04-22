@@ -49,6 +49,7 @@ jobs:
         if: steps.config-changed.outputs.changed == 'true'
         run: |
           HEAD=${{ github.event.pull_request.head.sha }}
+          git fetch origin "${HEAD}" --depth=2
           PARENT_SHA=$(git rev-parse "${HEAD}^1")
           MERGE_BASE_SHA=$(git rev-parse "${GITHUB_SHA}^1")
           echo "Parent commit: $PARENT_SHA"
