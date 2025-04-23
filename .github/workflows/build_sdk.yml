@@ -49,9 +49,10 @@ jobs:
         if: steps.config-changed.outputs.changed == 'true'
         run: |
           HEAD=${{ github.event.pull_request.head.sha }}
+          BASE=${{ github.event.pull_request.base.sha }}
           git fetch origin "${HEAD}" --depth=2
           PARENT_SHA=$(git rev-parse "${HEAD}^1")
-          MERGE_BASE_SHA=$(git rev-parse "${GITHUB_SHA}^1")
+          MERGE_BASE_SHA=$(git merge-base "${HEAD}" "${BASE}")
           echo "Parent commit: $PARENT_SHA"
           echo "Merge base: $MERGE_BASE_SHA"
           echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
@@ -94,13 +95,13 @@ jobs:
           fi
 
           PARENT_HASHES=$(jq -nc \
-            --arg "${{ env.OAS_PATH }}" "$PARENT_OAS_HASH" \
-            --arg "${{ env.CONFIG_PATH }}" "$PARENT_CONFIG_HASH" \
+            --arg "openapi.yml" "$PARENT_OAS_HASH" \
+            --arg "openapi.stainless.yml" "$PARENT_CONFIG_HASH" \
             '$ARGS.named'
           )
           MERGE_BASE_HASHES=$(jq -nc \
-            --arg "${{ env.OAS_PATH }}" "$MERGE_BASE_OAS_HASH" \
-            --arg "${{ env.CONFIG_PATH }}" "$MERGE_BASE_CONFIG_HASH" \
+            --arg "openapi.yml" "$MERGE_BASE_OAS_HASH" \
+            --arg "openapi.stainless.yml" "$MERGE_BASE_CONFIG_HASH" \
             '$ARGS.named'
           )
           PARENT_REVISION=$(jq -nc \
@@ -116,7 +117,7 @@ jobs:
       - name: Build SDK
         id: build-sdk
         if: steps.config-changed.outputs.changed == 'true'
-        uses: stainless-api/build-sdk-action@c3f5679bb41680d92bbe3605d55b6391ba838339
+        uses: stainless-api/build-sdk-action@5bd64acdfb2c0cbc06c43442721929df118e7d74
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
           oas_path: ${{ env.OAS_PATH }}
@@ -285,7 +286,7 @@ jobs:
       - name: Build SDK
         id: build-sdk
         if: steps.config-changed.outputs.changed == 'true'
-        uses: stainless-api/build-sdk-action@c3f5679bb41680d92bbe3605d55b6391ba838339
+        uses: stainless-api/build-sdk-action@5bd64acdfb2c0cbc06c43442721929df118e7d74
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
           oas_path: ${{ env.OAS_PATH }}
