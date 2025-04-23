@@ -113,6 +113,12 @@ jobs:
 
           git checkout ${{ github.event.pull_request.head.sha }}
 
+          echo "oas"
+          cat ${{ env.OAS_PATH }}
+
+          echo "config"
+          cat ${{ env.CONFIG_PATH }}
+
       - name: Build SDK
         id: build-sdk
         if: steps.config-changed.outputs.changed == 'true'
