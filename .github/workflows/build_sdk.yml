@@ -50,9 +50,16 @@ jobs:
         run: |
           HEAD=${{ github.event.pull_request.head.sha }}
           BASE=${{ github.event.pull_request.base.sha }}
-          git fetch origin "${HEAD}" --depth=2
+
+          git fetch --depth=2 origin "${HEAD}" --depth=2
           PARENT_SHA=$(git rev-parse "${HEAD}^1")
+
+          git fetch --depth=1 origin "${BASE}"
+          while [ -z "$( git merge-base "${BASE}" "${HEAD}" )" ]; do
+            git fetch -q --deepen=10 origin "${BASE}" "${HEAD}";
+          done
           MERGE_BASE_SHA=$(git merge-base "${HEAD}" "${BASE}")
+
           echo "Parent commit: $PARENT_SHA"
           echo "Merge base: $MERGE_BASE_SHA"
           echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
