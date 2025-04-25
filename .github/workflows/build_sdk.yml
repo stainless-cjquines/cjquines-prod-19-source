@@ -128,10 +128,7 @@ jobs:
 
           PARENT_REVISION_ARGS+=("main")
 
-          echo "PARENT_REVISION_ARGS: $PARENT_REVISION_ARGS"
-          echo "PARENT_REVISION_ARGS: ${PARENT_REVISION_ARGS[@]}"
-
-          PARENT_REVISION=$(jq -nc '$ARGS.positional' --jsonargs "${PARENT_REVISION_ARGS[@]}")
+          PARENT_REVISION=$(jq -nc '$ARGS.positional' --jsonargs ${PARENT_REVISION_ARGS[@]})
 
           echo "parent_revision=$PARENT_REVISION" >> $GITHUB_OUTPUT
           echo "parent_revision=$PARENT_REVISION"
