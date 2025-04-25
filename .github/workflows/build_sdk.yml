@@ -124,7 +124,7 @@ jobs:
 
           if [ -n "${{ steps.parent-commits.outputs.base_ref }}" ]; then
             PARENT_REVISION_ARGS+=("${{ steps.parent-commits.outputs.base_ref }}")
-          else
+          fi
 
           PARENT_REVISION_ARGS+=("main")
 
