@@ -70,9 +70,6 @@ resources:
       user: User
     methods:
       create: post /user
-      create_with_list:
-        endpoint: post /user/createWithList
-        body_param_name: items
       login: get /user/login
       logout: get /user/logout
       retrieve: get /user/{username}
