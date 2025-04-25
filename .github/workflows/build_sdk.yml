@@ -72,6 +72,8 @@ jobs:
         id: parent-input-hashes
         if: steps.config-changed.outputs.changed == 'true'
         run: |
+          PARENT_REVISION_ARGS=()
+
           git checkout ${{ steps.parent-commits.outputs.parent_sha }}
 
           if [ -f "${{ env.OAS_PATH }}" ]; then
@@ -87,6 +89,14 @@ jobs:
             echo "File ${{ env.CONFIG_PATH }} does not exist at parent commit."
             PARENT_CONFIG_HASH=""
           fi
+
+          PARENT_HASHES=$(jq -nc \
+            --arg "openapi.yml" "$PARENT_OAS_HASH" \
+            --arg "openapi.stainless.yml" "$PARENT_CONFIG_HASH" \
+            '$ARGS.named'
+          )
+
+          PARENT_REVISION_ARGS+=("$PARENT_HASHES")
 
           git checkout ${{ steps.parent-commits.outputs.merge_base_sha }}
 
@@ -104,20 +114,21 @@ jobs:
             MERGE_BASE_CONFIG_HASH=""
           fi
 
-          PARENT_HASHES=$(jq -nc \
-            --arg "openapi.yml" "$PARENT_OAS_HASH" \
-            --arg "openapi.stainless.yml" "$PARENT_CONFIG_HASH" \
-            '$ARGS.named'
-          )
           MERGE_BASE_HASHES=$(jq -nc \
             --arg "openapi.yml" "$MERGE_BASE_OAS_HASH" \
             --arg "openapi.stainless.yml" "$MERGE_BASE_CONFIG_HASH" \
             '$ARGS.named'
           )
-          PARENT_REVISION=$(jq -nc \
-            '$ARGS.positional' \
-            --jsonargs "$PARENT_HASHES" "$MERGE_BASE_HASHES" '"${{ github.base_ref }}"'
-          )
+
+          PARENT_REVISION_ARGS+=("$MERGE_BASE_HASHES")
+
+          if [ -n "${{ steps.parent-commits.outputs.base_ref }}" ]; then
+            PARENT_REVISION_ARGS+=("${{ steps.parent-commits.outputs.base_ref }}")
+          else
+
+          PARENT_REVISION_ARGS+=("main")
+
+          PARENT_REVISION=$(jq -nc '$ARGS.positional' --jsonargs "${PARENT_REVISION_ARGS[@]}")
 
           echo "parent_revision=$PARENT_REVISION" >> $GITHUB_OUTPUT
           echo "parent_revision=$PARENT_REVISION"
