@@ -28,10 +28,34 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Check if either OAS or config is changed
+      - name: Get possible parent SHAs
+        id: parent-commits
+        run: |
+          HEAD=${{ github.event.pull_request.head.sha }}
+          BASE=${{ github.event.pull_request.base.sha }}
+
+          git fetch --depth=2 origin "${HEAD}" --depth=2
+          PARENT_SHA=$(git rev-parse "${HEAD}^1")
+
+          git fetch --depth=1 origin "${BASE}"
+          # deepen until we find merge base
+          while [ -z "$( git merge-base "${BASE}" "${HEAD}" )" ]; do
+            git fetch -q --deepen=10 origin "${BASE}" "${HEAD}";
+          done
+          MERGE_BASE_SHA=$(git merge-base "${HEAD}" "${BASE}")
+
+          echo "Parent commit: $PARENT_SHA"
+          echo "Merge base: $MERGE_BASE_SHA"
+          echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
+          echo "merge_base_sha=$MERGE_BASE_SHA" >> $GITHUB_OUTPUT
+
+      - name: Check if either OAS or config is changed over merge base
         id: config-changed
         run: |
-          CHANGED_FILES=$(git diff --name-only "${GITHUB_SHA}^1" "${GITHUB_SHA}")
+          HEAD=${{ github.event.pull_request.head.sha }}
+          MERGE_BASE=${{ steps.parent-commits.outputs.merge_base_sha }}
+
+          CHANGED_FILES=$(git diff --name-only "${MERGE_BASE}" "${HEAD}")
           echo "Changed files: $CHANGED_FILES"
 
           if echo "$CHANGED_FILES" | grep -q "${{ env.OAS_PATH }}"; then
@@ -43,27 +67,6 @@ jobs:
             echo "Config file changed"
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
-
-      - name: Get possible parent SHAs
-        id: parent-commits
-        if: steps.config-changed.outputs.changed == 'true'
-        run: |
-          HEAD=${{ github.event.pull_request.head.sha }}
-          BASE=${{ github.event.pull_request.base.sha }}
-
-          git fetch --depth=2 origin "${HEAD}" --depth=2
-          PARENT_SHA=$(git rev-parse "${HEAD}^1")
-
-          git fetch --depth=1 origin "${BASE}"
-          while [ -z "$( git merge-base "${BASE}" "${HEAD}" )" ]; do
-            git fetch -q --deepen=10 origin "${BASE}" "${HEAD}";
-          done
-          MERGE_BASE_SHA=$(git merge-base "${HEAD}" "${BASE}")
-
-          echo "Parent commit: $PARENT_SHA"
-          echo "Merge base: $MERGE_BASE_SHA"
-          echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
-          echo "merge_base_sha=$MERGE_BASE_SHA" >> $GITHUB_OUTPUT
 
       - name: Compute MD5 hashes of parent inputs
         id: parent-input-hashes
