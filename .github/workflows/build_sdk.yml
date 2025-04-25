@@ -32,10 +32,14 @@ jobs:
         id: parent-commits
         run: |
           HEAD=${{ github.event.pull_request.head.sha }}
-          BASE=${{ github.event.pull_request.base.sha }}
 
           git fetch --depth=2 origin "${HEAD}" --depth=2
           PARENT_SHA=$(git rev-parse "${HEAD}^1")
+
+          echo "Parent commit: $PARENT_SHA"
+          echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
+
+          BASE=${{ github.event.pull_request.base.sha }}
 
           git fetch --depth=1 origin "${BASE}"
           # deepen until we find merge base
@@ -44,10 +48,15 @@ jobs:
           done
           MERGE_BASE_SHA=$(git merge-base "${HEAD}" "${BASE}")
 
-          echo "Parent commit: $PARENT_SHA"
           echo "Merge base: $MERGE_BASE_SHA"
-          echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
           echo "merge_base_sha=$MERGE_BASE_SHA" >> $GITHUB_OUTPUT
+
+          BASE_REF=${{ github.base_ref }}
+
+          if [ "${BASE_REF}" != "${{ github.event.repository.default_branch }}" ]; then
+            echo "Non-main base ref: preview/$BASE_REF"
+            echo "base_ref=preview/$BASE_REF" >> $GITHUB_OUTPUT
+          fi
 
       - name: Check if either OAS or config is changed over merge base
         id: config-changed
@@ -96,7 +105,7 @@ jobs:
             '$ARGS.named'
           )
 
-          PARENT_REVISION_ARGS+=("\"$PARENT_HASHES\"")
+          PARENT_REVISION_ARGS+=("$PARENT_HASHES")
 
           git checkout ${{ steps.parent-commits.outputs.merge_base_sha }}
 
@@ -120,13 +129,13 @@ jobs:
             '$ARGS.named'
           )
 
-          PARENT_REVISION_ARGS+=("\"$MERGE_BASE_HASHES\"")
+          PARENT_REVISION_ARGS+=("$MERGE_BASE_HASHES")
 
           if [ -n "${{ steps.parent-commits.outputs.base_ref }}" ]; then
-            PARENT_REVISION_ARGS+=("\"${{ steps.parent-commits.outputs.base_ref }}\"")
+            PARENT_REVISION_ARGS+=('"${{ steps.parent-commits.outputs.base_ref }}"')
           fi
 
-          PARENT_REVISION_ARGS+=("\"main\"")
+          PARENT_REVISION_ARGS+=('"main"')
 
           PARENT_REVISION=$(jq -nc '$ARGS.positional' --jsonargs "${PARENT_REVISION_ARGS[@]}")
 
