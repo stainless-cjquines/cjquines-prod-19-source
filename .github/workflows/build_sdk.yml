@@ -85,7 +85,7 @@ jobs:
             PARENT_CONFIG_HASH=""
           fi
 
-          git checkout ${{ steps.merge-base.outputs.merge_base_sha }}
+          git checkout ${{ steps.parent-commits.outputs.merge_base_sha }}
 
           if [ -f "${{ env.OAS_PATH }}" ]; then
             MERGE_BASE_OAS_HASH=$(md5sum "${{ env.OAS_PATH }}" | awk '{ print $1 }')
