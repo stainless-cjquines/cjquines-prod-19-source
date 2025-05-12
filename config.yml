@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=https://app.stainless.com/config.schema.json
 organization:
-  # Name of your organization or company, used to determine the name of the client
-  # and headings.
+  # Change your image
   name: cjquines-prod-19
   # Link to your API documentation.
   docs: ""
