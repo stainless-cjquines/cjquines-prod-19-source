@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://app.stainless.com/config.schema.json
 organization:
-  # changed image again
+  # change 1 2
   name: cjquines-prod-19
   # Link to your API documentation.
   docs: ""
