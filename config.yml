@@ -2,6 +2,7 @@
 organization:
   name: cjquines-prod-19
   docs: ""
+  # main 1
   contact: ""
 
 # `targets` define the output targets and their customization options, such as
