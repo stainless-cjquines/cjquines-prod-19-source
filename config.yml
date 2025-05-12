@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://app.stainless.com/config.schema.json
 organization:
+  # branch 1 2
   name: cjquines-prod-19
   docs: ""
   # main 1 2
@@ -61,7 +62,7 @@ resources:
         methods:
           create: post /store/order
           retrieve: get /store/order/{orderId}
-          # delete: delete /store/order/{orderId}
+          delete: delete /store/order/{orderId}
 
   user:
     models:
