@@ -62,7 +62,7 @@ resources:
         methods:
           create: post /store/order
           retrieve: get /store/order/{orderId}
-          # delete: delete /store/order/{orderId}
+          delete: delete /store/order/{orderId}
 
   user:
     models:
