@@ -1,4 +1,4 @@
-name: Build SDK
+name: Build SDKs for pull request
 
 on:
   pull_request:
@@ -9,15 +9,15 @@ on:
       - closed
 
 env:
+  STAINLESS_ORG: stainless-cjquines
+  STAINLESS_PROJECT: cjquines-prod-19
   OAS_PATH: spec.yml
   CONFIG_PATH: config.yml
-  STAINLESS_ORG_NAME: stainless-cjquines
-  STAINLESS_PROJECT_NAME: cjquines-prod-19
-  FAIL_RUN_ON: note
-  GITHUB_TOKEN: ${{ github.token }}
+  COMMIT_MESSAGE: ${{ github.event.pull_request.title }}
+  FAIL_ON: note
 
 jobs:
-  preview-sdk:
+  preview:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     permissions:
@@ -30,28 +30,23 @@ jobs:
           fetch-depth: 2
 
       - name: Run preview builds
-        uses: stainless-api/build-sdk-action/preview@5d23a970921aef6a4369e269f69b8dfe0f6262f8
+        uses: stainless-api/build-sdk-action/preview@d88b33e13f96351212723fd19050f04f2ec5bfaa
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
           oas_path: ${{ env.OAS_PATH }}
           config_path: ${{ env.CONFIG_PATH }}
-          project_name: ${{ env.STAINLESS_PROJECT_NAME }}
-          org_name: ${{ env.STAINLESS_ORG_NAME }}
-          fail_run_on: ${{ env.FAIL_RUN_ON }}
-          github_token: ${{ env.GITHUB_TOKEN }}
+          commit_message: ${{ env.COMMIT_MESSAGE }}
+          fail_on: ${{ env.FAIL_ON }}
 
-  merge-sdk:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+  merge:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -64,12 +59,12 @@ jobs:
       # against preview/${{ github.head_ref }} to complete, but assuming that
       # the preview-sdk job happens before the PR merge, it should be fine.
       - name: Run merge build
-        uses: stainless-api/build-sdk-action/merge@5d23a970921aef6a4369e269f69b8dfe0f6262f8
+        uses: stainless-api/build-sdk-action/merge@d88b33e13f96351212723fd19050f04f2ec5bfaa
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
           oas_path: ${{ env.OAS_PATH }}
           config_path: ${{ env.CONFIG_PATH }}
-          project_name: ${{ env.STAINLESS_PROJECT_NAME }}
-          org_name: ${{ env.STAINLESS_ORG_NAME }}
-          fail_run_on: ${{ env.FAIL_RUN_ON }}
-          github_token: ${{ env.GITHUB_TOKEN }}
+          commit_message: ${{ env.COMMIT_MESSAGE }}
+          fail_on: ${{ env.FAIL_ON }}
