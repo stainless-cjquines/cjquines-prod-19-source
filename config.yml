@@ -6,6 +6,7 @@ organization:
   # Link to your API documentation.
   docs: ""
   # Contact email for bug reports, questions, and support requests.
+  # boom!
   contact: ""
 
 # `targets` define the output targets and their customization options, such as
