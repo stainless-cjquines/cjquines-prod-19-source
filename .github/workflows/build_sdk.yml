@@ -1,70 +1,19 @@
-name: Build SDKs for pull request
+name: Upload OpenAPI spec to Stainless
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - closed
-
-env:
-  STAINLESS_ORG: stainless-cjquines
-  STAINLESS_PROJECT: cjquines-prod-19
-  OAS_PATH: spec.yml
-  CONFIG_PATH: config.yml
-  COMMIT_MESSAGE: ${{ github.event.pull_request.title }}
-  FAIL_ON: note
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  preview:
-    if: github.event.action != 'closed'
+  stainless:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Run preview builds
-        uses: stainless-api/build-sdk-action/preview@1387c158b4b778a0eac16afb97939475160b140f
+      - uses: actions/checkout@v4
+      - uses: stainless-api/upload-openapi-spec-action@cj/use-v0-api
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
-          org: ${{ env.STAINLESS_ORG }}
-          project: ${{ env.STAINLESS_PROJECT }}
-          oas_path: ${{ env.OAS_PATH }}
-          config_path: ${{ env.CONFIG_PATH }}
-          commit_message: ${{ env.COMMIT_MESSAGE }}
-          fail_on: ${{ env.FAIL_ON }}
-
-  merge:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      # Note that this only merges in changes that happened on the last build on
-      # preview/${{ github.head_ref }}. It's possible that there are OAS/config
-      # changes that haven't been built, if the preview-sdk job didn't finish
-      # before this step starts. In theory we want to wait for all builds
-      # against preview/${{ github.head_ref }} to complete, but assuming that
-      # the preview-sdk job happens before the PR merge, it should be fine.
-      - name: Run merge build
-        uses: stainless-api/build-sdk-action/merge@1387c158b4b778a0eac16afb97939475160b140f
-        with:
-          stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
-          org: ${{ env.STAINLESS_ORG }}
-          project: ${{ env.STAINLESS_PROJECT }}
-          oas_path: ${{ env.OAS_PATH }}
-          config_path: ${{ env.CONFIG_PATH }}
-          commit_message: ${{ env.COMMIT_MESSAGE }}
-          fail_on: ${{ env.FAIL_ON }}
+          input_path: "spec.yml"
+          project_name: "cjquines-prod-19"
+          commit_message: "feat(api): my cool feature"
+          config_path: "config.yml"
