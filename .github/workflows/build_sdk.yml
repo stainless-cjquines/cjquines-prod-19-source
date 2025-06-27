@@ -17,3 +17,4 @@ jobs:
           project_name: "cjquines-prod-19"
           commit_message: "feat(api): my cool feature"
           config_path: "config.yml"
+          output_path: "output.yml"
