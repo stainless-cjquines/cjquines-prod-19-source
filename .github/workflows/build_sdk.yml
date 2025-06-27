@@ -16,5 +16,6 @@ jobs:
           input_path: "spec.yml"
           project_name: "cjquines-prod-19"
           commit_message: "feat(api): my cool feature"
-          config_path: "config.yml"
+          guess_config: true
           output_path: "output.yml"
+      - run: cat output.yml
