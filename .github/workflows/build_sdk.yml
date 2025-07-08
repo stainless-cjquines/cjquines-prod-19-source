@@ -1,21 +1,92 @@
-name: Upload OpenAPI spec to Stainless
+name: Build SDKs
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Stainless organization name.
+  STAINLESS_ORG: stainless-cjquines
+
+  # Stainless project name.
+  STAINLESS_PROJECT: cjquines-prod-19
+
+  # Path to your OpenAPI spec.
+  OAS_PATH: spec.yml
+
+  # Path to your Stainless config. Optional; only provide this if you prefer
+  # to maintain the ground truth Stainless config in your own repo.
+  CONFIG_PATH: config.yml
+
+  # The commit message to use for the SDK builds. Use a commit message in the
+  # conventional commits format: https://www.conventionalcommits.org/en/v1.0.0/
+  COMMIT_MESSAGE: ${{ github.event.pull_request.title }}
+
+  # When to fail the job based on build conclusion.
+  # Options: "never" | "note" | "warning" | "error" | "fatal".
+  FAIL_ON: error
+
+  # In your repo secrets, configure:
+  # - STAINLESS_API_KEY: a Stainless API key, which you can generate on the
+  #   Stainless organization dashboard
 
 jobs:
-  stainless:
+  preview:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: stainless-api/upload-openapi-spec-action@cj/use-v0-api
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Run preview builds
+        uses: stainless-api/build-sdk-action/preview@cj/comment-redesign
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
-          input_path: "spec.yml"
-          project_name: "cjquines-prod-19"
-          commit_message: "feat(api): my cool feature"
-          guess_config: true
-          output_path: "output.yml"
-      - run: cat output.yml
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
+          oas_path: ${{ env.OAS_PATH }}
+          config_path: ${{ env.CONFIG_PATH }}
+          commit_message: ${{ env.COMMIT_MESSAGE }}
+          fail_on: ${{ env.FAIL_ON }}
+
+  merge:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # Note that this only merges in changes that happened on the last build on
+      # preview/${{ github.head_ref }}. It's possible that there are OAS/config
+      # changes that haven't been built, if the preview-sdk job didn't finish
+      # before this step starts. In theory we want to wait for all builds
+      # against preview/${{ github.head_ref }} to complete, but assuming that
+      # the preview-sdk job happens before the PR merge, it should be fine.
+      - name: Run merge build
+        uses: stainless-api/build-sdk-action/merge@cj/comment-redesign
+        with:
+          stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
+          oas_path: ${{ env.OAS_PATH }}
+          config_path: ${{ env.CONFIG_PATH }}
+          commit_message: ${{ env.COMMIT_MESSAGE }}
+          fail_on: ${{ env.FAIL_ON }}
