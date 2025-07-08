@@ -46,7 +46,7 @@ resources:
       find_by_status: get /pet/findByStatus
       find_by_tags: get /pet/findByTags
       retrieve: get /pet/{petId}
-      update_by_id: post /pet/{petId}
+      # update_by_id: post /pet/{petId}
       delete: delete /pet/{petId}
       upload_image:
         endpoint: post /pet/{petId}/uploadImage
