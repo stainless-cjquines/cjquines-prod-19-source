@@ -12,7 +12,7 @@ build-sdk:
   extends: .build-sdk
   variables:
     STAINLESS_API_KEY: $STAINLESS_API_KEY
-    STAINLESS_PROJECT: cjquines-prod-19
+    PROJECT: cjquines-prod-19
     OAS_PATH: spec.yml
     CONFIG_PATH: config.yml
     COMMIT_MESSAGE: "feat(api): update api from gitlab"
