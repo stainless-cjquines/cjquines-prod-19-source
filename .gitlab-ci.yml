@@ -6,7 +6,6 @@ stages:
   - read
 
 build-sdk:
-  image: node:20-alpine
   stage: build
   only:
     - main
