@@ -1,5 +1,5 @@
 include:
-  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/a4addc8ac935f3460948e41989af89f83187e73a/build/gitlab-ci.yml"
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/d1e61ec05bf11cd44c6c48db88c4b0a4bf262b01/build/gitlab-ci.yml"
 
 stages:
   - build
