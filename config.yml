@@ -6,6 +6,9 @@ organization:
   # main
   contact: ""
 
+openapi:
+  code_samples: stainless
+
 # `targets` define the output targets and their customization options, such as
 # whether to emit the Node SDK and what it's package name should be.
 targets:
