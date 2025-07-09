@@ -1,0 +1,27 @@
+include:
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/gitlab/build/gitlab-ci.yml"
+
+stages:
+  - build
+  - read
+
+build-sdk:
+  stage: build
+  only:
+    - main
+  extends: .build-sdk
+  variables:
+    STAINLESS_API_KEY: $STAINLESS_API_KEY
+    STAINLESS_PROJECT: cjquines-prod-19
+    OAS_PATH: spec.yml
+    CONFIG_PATH: config.yml
+    COMMIT_MESSAGE: "feat(api): update api from gitlab"
+    FAIL_ON: error
+    DOCUMENTED_SPEC_PATH: output.yml
+
+readme:
+  stage: read
+  only:
+    - main
+  script:
+    - cat output.yml
