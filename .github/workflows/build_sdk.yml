@@ -1,21 +1,62 @@
-name: Upload OpenAPI spec to Stainless
+name: Build SDKs for pull request
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  STAINLESS_ORG: stainless-cjquines
+  STAINLESS_PROJECT: cjquines-prod-19
+  OAS_PATH: spec.yml
+  CONFIG_PATH: config.yml
 
 jobs:
-  stainless:
+  preview:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: stainless-api/upload-openapi-spec-action@cj/use-v0-api
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Run preview builds
+        uses: stainless-api/upload-openapi-spec-action/preview@v1
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
-          input_path: "spec.yml"
-          project_name: "cjquines-prod-19"
-          commit_message: "feat(api): my cool feature"
-          guess_config: true
-          output_path: "output.yml"
-      - run: cat output.yml
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
+          oas_path: ${{ env.OAS_PATH }}
+          config_path: ${{ env.CONFIG_PATH }}
+
+  merge:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Run merge build
+        uses: stainless-api/upload-openapi-spec-action/merge@v1
+        with:
+          stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
+          org: ${{ env.STAINLESS_ORG }}
+          project: ${{ env.STAINLESS_PROJECT }}
+          oas_path: ${{ env.OAS_PATH }}
+          config_path: ${{ env.CONFIG_PATH }}
