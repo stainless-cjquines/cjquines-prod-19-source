@@ -1,0 +1,14 @@
+name: Dump GitHub event payload
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
