@@ -22,7 +22,7 @@ paths:
       tags:
         - pet
       summary: Update an existing pet kajsdkfasdf
-      description: Update an existing pet! By its amazing ID! Omg
+      description: Update an existing pet! By its amazing ID! qjwkerjk123je4
       operationId: updatePet
       requestBody:
         description: Update an existent pet in the store
