@@ -21,8 +21,8 @@ paths:
     put:
       tags:
         - pet
-      summary: Update an existing pet
-      description: Update an existing pet by Id
+      summary: Update an existing pet by its id
+      description: Update an existing pet by its Id
       operationId: updatePet
       requestBody:
         description: Update an existent pet in the store
