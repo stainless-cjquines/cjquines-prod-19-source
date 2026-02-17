@@ -11,6 +11,7 @@ include:
     FAIL_ON: error
     STAINLESS_API_KEY: $STAINLESS_API_KEY
     GITLAB_TOKEN: $GITLAB_TOKEN
+    MAKE_COMMENT: true
 
 build:
   extends: [.common, .build-sdk]
