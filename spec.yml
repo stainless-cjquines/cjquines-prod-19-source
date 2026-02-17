@@ -21,11 +21,11 @@ paths:
     put:
       tags:
         - pet
-      summary: Update some existing pet
-      description: Update some existing pet by Id
+      summary: Update some existing pet, stack 1
+      description: Update some existing pet by Id, stack 1
       operationId: updatePet
       requestBody:
-        description: Update some existent pet in the store
+        description: Update some existent pet in the store, stack 1
         content:
           application/json:
             schema:
