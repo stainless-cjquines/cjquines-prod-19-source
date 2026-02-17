@@ -42,6 +42,7 @@ jobs:
           project: ${{ env.STAINLESS_PROJECT }}
           oas_path: ${{ env.OAS_PATH }}
           sha: ${{ github.event.after }}
+          make_comment: true
 
   preview:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
