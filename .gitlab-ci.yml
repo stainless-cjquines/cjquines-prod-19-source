@@ -13,6 +13,7 @@ include:
     GITLAB_TOKEN: $GITLAB_TOKEN
     MAKE_COMMENT: true
     SHA: $CI_COMMIT_SHA
+    LOG_LEVEL: debug
 
 build:
   extends: [.common, .build-sdk]
