@@ -10,6 +10,7 @@ include:
     OAS_PATH: spec.yml
     FAIL_ON: error
     STAINLESS_API_KEY: $STAINLESS_API_KEY
+    GITLAB_TOKEN: $GITLAB_TOKEN
     MAKE_COMMENT: true
     SHA: $CI_COMMIT_SHA
     LOG_LEVEL: debug
