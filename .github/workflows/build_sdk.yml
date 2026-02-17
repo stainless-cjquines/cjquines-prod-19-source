@@ -43,6 +43,7 @@ jobs:
           oas_path: ${{ env.OAS_PATH }}
           sha: ${{ github.event.after }}
           make_comment: true
+          github_token: ${{ github.token }}
 
   preview:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
