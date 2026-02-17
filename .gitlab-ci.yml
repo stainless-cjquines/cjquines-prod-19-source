@@ -12,6 +12,7 @@ include:
     STAINLESS_API_KEY: $STAINLESS_API_KEY
     GITLAB_TOKEN: $GITLAB_TOKEN
     MAKE_COMMENT: true
+    SHA: $CI_COMMIT_SHA
 
 build:
   extends: [.common, .build-sdk]
