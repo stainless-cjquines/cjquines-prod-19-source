@@ -22,29 +22,6 @@ env:
   OAS_PATH: spec.yml
 
 jobs:
-  build:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: DEBUG BUILD
-        uses: stainless-api/upload-openapi-spec-action/build@cj/use-gitlab-client
-        with:
-          stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
-          org: ${{ env.STAINLESS_ORG }}
-          project: ${{ env.STAINLESS_PROJECT }}
-          oas_path: ${{ env.OAS_PATH }}
-          sha: ${{ github.event.after }}
-          make_comment: true
-          github_token: ${{ github.token }}
-
   preview:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
