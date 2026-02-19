@@ -1,27 +1,29 @@
 include:
-  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/d1e61ec05bf11cd44c6c48db88c4b0a4bf262b01/build/gitlab-ci.yml"
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/build/gitlab-ci.yml"
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/preview/gitlab-ci.yml"
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/merge/gitlab-ci.yml"
 
-stages:
-  - build
-  - read
-
-build-sdk:
-  stage: build
-  only:
-    - main
-  extends: .build-sdk
+.common:
   variables:
-    STAINLESS_API_KEY: $STAINLESS_API_KEY
+    ORG: stainless-cjquines
     PROJECT: cjquines-prod-19
     OAS_PATH: spec.yml
-    CONFIG_PATH: config.yml
-    COMMIT_MESSAGE: "feat(api): update api from gitlab"
     FAIL_ON: error
-    DOCUMENTED_SPEC_PATH: output.yml
+    STAINLESS_API_KEY: $STAINLESS_API_KEY
+    GITLAB_TOKEN: $GITLAB_TOKEN
+    MAKE_COMMENT: true
+    SHA: $CI_COMMIT_SHA
+    LOG_LEVEL: debug
 
-readme:
-  stage: read
+build:
+  extends: [.common, .build-sdk]
+
+preview:
+  extends: [.common, .preview]
   only:
-    - main
-  script:
-    - cat output.yml
+    - merge_requests
+
+merge:
+  extends: [.common, .merge]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
