@@ -1,7 +1,5 @@
 include:
   - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/build/gitlab-ci.yml"
-  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/preview/gitlab-ci.yml"
-  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/merge/gitlab-ci.yml"
 
 .common:
   variables:
@@ -17,13 +15,3 @@ include:
 
 build:
   extends: [.common, .build-sdk]
-
-preview:
-  extends: [.common, .preview]
-  only:
-    - merge_requests
-
-merge:
-  extends: [.common, .merge]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
