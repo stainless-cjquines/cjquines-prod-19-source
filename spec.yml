@@ -56,11 +56,11 @@ paths:
     post:
       tags:
         - pet
-      summary: Add a new pet to the amazing store
-      description: Add a new pet to the amazing store
+      summary: Add a new pet to the amazing store, 2
+      description: Add a new pet to the amazing store, 2
       operationId: addPet
       requestBody:
-        description: Create a new pet in the store
+        description: Create a new pet in the store, 2
         content:
           application/json:
             schema:
