@@ -1,5 +1,5 @@
 include:
-  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build-preview-merge/build/gitlab-ci.yml"
+  - remote: "https://raw.githubusercontent.com/stainless-api/upload-openapi-spec-action/cj/combine-build/build/gitlab-ci.yml"
 
 .common:
   variables:
