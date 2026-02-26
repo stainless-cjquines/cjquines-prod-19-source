@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: OpenAPI 3.0 Pet Store (null change)
+  title: OpenAPI 3.0 Pet Store
   description: |-
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification.
   license:
@@ -21,11 +21,11 @@ paths:
     put:
       tags:
         - pet
-      summary: Update an existing pet by its ID, 1 aaaaaaahhhh
-      description: Update an existing pet by its ID, 1
+      summary: Update an existing pet by its ID, 3
+      description: Update an existing pet by its ID, 3
       operationId: updatePet
       requestBody:
-        description: Update an existent pet in the store by its ID, 1
+        description: Update an existent pet in the store by its ID, 3
         content:
           application/json:
             schema:
@@ -56,11 +56,11 @@ paths:
     post:
       tags:
         - pet
-      summary: Add a new pet to the amazing store, 2
-      description: Add a new pet to the amazing store, 2
+      summary: Add a new pet to the amazing store
+      description: Add a new pet to the amazing store
       operationId: addPet
       requestBody:
-        description: Create a new pet in the store, 2
+        description: Create a new pet in the store
         content:
           application/json:
             schema:
