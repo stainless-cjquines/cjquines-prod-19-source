@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 2
 
       - name: Run preview builds
-        uses: stainless-api/upload-openapi-spec-action/build@cj/combine-build
+        uses: stainless-api/upload-openapi-spec-action/build@main
         with:
           stainless_api_key: ${{ secrets.STAINLESS_API_KEY }}
           org: ${{ env.STAINLESS_ORG }}
